@@ -566,10 +566,22 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(`[Promptfolio Backend] Engine running on port ${PORT}`);
-  console.log(`[Health Endpoint] http://localhost:${PORT}/api/health`);
-  console.log(`[Tokens Catalog] http://localhost:${PORT}/api/tokens`);
-  console.log(`=======================================================`);
-});
+export { app };
+export default app;
+
+const isDirectRun = !process.env.VERCEL && Boolean(
+  process.argv[1] && (
+    process.argv[1].endsWith('server.js') || 
+    process.argv[1].includes('server.js')
+  )
+);
+
+if (isDirectRun) {
+  app.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(`[Promptfolio Backend] Engine running on port ${PORT}`);
+    console.log(`[Health Endpoint] http://localhost:${PORT}/api/health`);
+    console.log(`[Tokens Catalog] http://localhost:${PORT}/api/tokens`);
+    console.log(`=======================================================`);
+  });
+}

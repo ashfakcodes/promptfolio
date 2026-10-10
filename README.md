@@ -190,14 +190,19 @@ cp .env.example .env
 npm start
 ```
 
-### 3. Frontend Setup
-The frontend is built with zero-build Vanilla HTML5/CSS3/JavaScript (ES6):
+### 4. 🚀 1-Click Vercel Deployment
+Promptfolio is fully configured for zero-config deployment to [Vercel](https://vercel.com):
+1. Import this repository into Vercel.
+2. In **Environment Variables**, optionally set:
+   * `OPENROUTER_API_KEY`: Your OpenRouter API key *(built-in deterministic fallback active if omitted)*.
+   * `OPENROUTER_MODEL`: `inclusionai/ling-3.0-flash` *(default)*.
+3. Click **Deploy**. Vercel will automatically serve the static frontend and route `/api/*` endpoints through the serverless Node.js runtime.
+
+Or deploy via Vercel CLI:
 ```bash
-cd frontend
-# Serve with any static server (e.g. npx serve, python http.server, or Live Server)
-npx -y serve . -p 3000
+npm install -g vercel
+vercel
 ```
-Open [http://localhost:3000/landing.html](http://localhost:3000/landing.html) or [http://localhost:3000/app.html](http://localhost:3000/app.html) in your browser.
 
 ---
 
@@ -207,6 +212,10 @@ Open [http://localhost:3000/landing.html](http://localhost:3000/landing.html) or
 BNBCHAIN Hackathon/
 ├── README.md                            # Master project documentation & architecture
 ├── PROMPTFOLIO_PLAN.md                  # Detailed implementation blueprint
+├── vercel.json                          # Vercel serverless routing & asset configuration
+├── package.json                         # Root build scripts & shared dependencies
+├── api/
+│   └── index.js                         # Vercel Serverless Function entry point
 ├── contracts/
 │   ├── BasketRouter.sol                 # Atomic multi-swap aggregator contract on BSC
 │   └── BStocksRegistry.sol              # On-chain verified bStocks registry & whitelist
@@ -237,6 +246,7 @@ BNBCHAIN Hackathon/
 ├── frontend/
 │   ├── app.html                         # High-performance dApp terminal & Agentic Control Hub
 │   ├── landing.html                     # Project landing overview
+│   ├── index.html                       # Entry point redirect
 │   └── src/
 │       ├── script.js                    # Terminal controller, Web3 provider & MPC handlers
 │       ├── styles.css                   # Financial UI styling & responsive layout
@@ -249,4 +259,7 @@ BNBCHAIN Hackathon/
     └── DEMO_SCRIPT.md                   # Video demonstration guide
 ```
 
+---
+
 *Built for BNB Chain Hackathon: Tokenized Stocks Edition.*
+

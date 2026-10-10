@@ -49,7 +49,10 @@ class AgenticWalletService {
       sessionId: null,
       executionHistory: []
     };
-    this.sessionDir = process.env.BINANCE_BAW_DIR || path.join(os.homedir(), '.baw');
+    const defaultBawDir = (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME)
+      ? path.join(os.tmpdir(), '.baw')
+      : path.join(os.homedir(), '.baw');
+    this.sessionDir = process.env.BINANCE_BAW_DIR || defaultBawDir;
     this.pairingDir = path.join(this.sessionDir, 'active_pairing');
     try {
       if (!fs.existsSync(this.pairingDir)) fs.mkdirSync(this.pairingDir, { recursive: true });
@@ -359,13 +362,18 @@ class AgenticWalletService {
    */
   async runBawCommand(args, timeoutMs = 12000, customDir = null) {
     try {
-      const bawPath = path.resolve(__dirname, '../../node_modules/@binance/agentic-wallet/dist/index.js');
+      const possibleBawPaths = [
+        path.resolve(__dirname, '../../node_modules/@binance/agentic-wallet/dist/index.js'),
+        path.resolve(process.cwd(), 'node_modules/@binance/agentic-wallet/dist/index.js'),
+        path.resolve(process.cwd(), 'backend/node_modules/@binance/agentic-wallet/dist/index.js')
+      ];
+      const bawPath = possibleBawPaths.find(p => fs.existsSync(p));
       const argsArray = Array.isArray(args) ? [...args] : args.split(/\s+/).filter(Boolean);
       if (!argsArray.includes('--json')) argsArray.push('--json');
 
       const env = customDir ? { ...process.env, BINANCE_BAW_DIR: customDir } : process.env;
 
-      if (fs.existsSync(bawPath)) {
+      if (bawPath) {
         const { stdout } = await execFileAsync(process.execPath, [bawPath, ...argsArray], { 
           timeout: timeoutMs,
           env

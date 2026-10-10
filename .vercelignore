@@ -1,0 +1,9 @@
+contracts/
+docs/
+skills/
+*.md
+*.bat
+backend/test/
+backend/node_modules/
+.git/
+.env.example

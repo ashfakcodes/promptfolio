@@ -12,7 +12,7 @@ export const BSTOCKS_CATALOG = [
     decimals: 18,
     chainAddresses: {
       97: '0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa',
-      56: '0x02Fca66C1D1aFB4E2A7884261eB00F63598a7436
+      56: '0x02Fca66C1D1aFB4E2A7884261eB00F63598a7436'
     },
     basePriceUsd: 128.40,
     tradFiClosePriceUsd: 126.85,
