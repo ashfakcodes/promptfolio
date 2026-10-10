@@ -29,6 +29,15 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json({ limit: '100kb' }));
 
+// Path unwrapping middleware for serverless proxy environments
+app.use((req, res, next) => {
+  const matchedPath = req.headers['x-matched-path'] || req.headers['x-vercel-matched-path'] || req.headers['x-original-url'];
+  if ((req.path === '/index.js' || req.path === '/server.js' || req.path === '/app.js') && matchedPath && matchedPath !== req.path) {
+    req.url = matchedPath;
+  }
+  next();
+});
+
 // Serve static frontend assets
 app.use(express.static(frontendDir));
 app.use('/frontend', express.static(frontendDir));
@@ -36,7 +45,7 @@ app.use('/src', express.static(path.join(frontendDir, 'src')));
 app.use('/frontend/src', express.static(path.join(frontendDir, 'src')));
 
 // Web UI routes
-app.get(['/', '/landing', '/landing.html', '/index.html', '/frontend/landing.html', '/frontend/index.html', '/frontend'], (req, res) => {
+app.get(['/', '/landing', '/landing.html', '/index.html', '/frontend/landing.html', '/frontend/index.html', '/frontend', '/index.js', '/server.js', '/app.js'], (req, res) => {
   res.sendFile(path.join(frontendDir, 'landing.html'));
 });
 
