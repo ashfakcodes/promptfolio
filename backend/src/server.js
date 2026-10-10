@@ -29,11 +29,18 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json({ limit: '100kb' }));
 
-// Path unwrapping middleware for serverless proxy environments
+// Path unwrapping and normalization middleware for serverless proxy environments
 app.use((req, res, next) => {
   const matchedPath = req.headers['x-matched-path'] || req.headers['x-vercel-matched-path'] || req.headers['x-original-url'];
   if ((req.path === '/index.js' || req.path === '/server.js' || req.path === '/app.js') && matchedPath && matchedPath !== req.path) {
     req.url = matchedPath;
+  }
+  // Normalize /foo -> /api/foo for API endpoints if stripped by router
+  if (!req.url.startsWith('/api/') && !req.url.startsWith('/src/') && !req.url.startsWith('/frontend/') && !['/', '/landing', '/landing.html', '/index.html', '/app', '/app.html'].includes(req.path)) {
+    const knownApiPrefixes = ['/synthesize', '/health', '/tokens', '/networks', '/agentic-wallet', '/registry', '/x402', '/simulate'];
+    if (knownApiPrefixes.some(p => req.url.startsWith(p))) {
+      req.url = `/api${req.url}`;
+    }
   }
   next();
 });

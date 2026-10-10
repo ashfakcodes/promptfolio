@@ -1461,7 +1461,13 @@ async function runSynthesis(prompt, investmentAmount) {
       })
     });
 
-    const data = await response.json();
+    let data;
+    const rawText = await response.text();
+    try {
+      data = JSON.parse(rawText);
+    } catch (_) {
+      throw new Error(`Server returned HTTP ${response.status}: ${rawText.substring(0, 120)}`);
+    }
 
     if (!response.ok || !data.success) {
       if (data.code === 'UNSUPPORTED_THEME') {
