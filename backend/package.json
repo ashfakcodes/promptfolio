@@ -1,0 +1,20 @@
+{
+  "name": "promptfolio-backend",
+  "version": "1.0.0",
+  "description": "Autonomous Natural-Language ETF Synthesizer for BNB Chain bStocks",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node test/api.test.js && node test/equal_weight_cap.test.js && node test/quant_mvp.test.js && node test/unsupported_sector.test.js"
+  },
+  "dependencies": {
+    "@binance/agentic-wallet": "^1.10.0",
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
+    "express": "^4.21.2"
+  }
+}

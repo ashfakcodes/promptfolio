@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Promptfolio — On-Chain ETF Synthesizer Studio</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' http://localhost:* ws://localhost:* http://127.0.0.1:* ws://127.0.0.1:* https://* http://*;"
+    />
+    <link rel="stylesheet" href="./src/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="./src/binance_logo_yellow.svg" />
+    <script src="./src/qrcode.min.js"></script>
+  </head>
+  <body>
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+      <div class="nav-brand">
+        <a href="landing.html" class="nav-brand-link" title="Return to Promptfolio Overview & Guide">
+          <span class="brand-title">PROMPTFOLIO<span class="brand-dot">.</span> <span class="desk-tag">STUDIO</span></span>
+        </a>
+      </div>
+
+      <div class="nav-controls">
+        <!-- Wallet Mode Toggle: Agentic Wallet (Autonomous) vs Extension -->
+        <div class="wallet-mode-toggle" id="walletModeToggle" title="Toggle between Binance Agentic Wallet (Autonomous AI Agent) and Extension Mode">
+          <button class="mode-btn active" data-mode="agentic" id="modeAgentic" title="Binance Agentic Wallet Mode (Autonomous AI Agent)">
+            <span class="mode-text-full">Agentic Wallet</span>
+            <span class="mode-text-mid">Agentic</span>
+            <span class="mode-text-short">Agent</span>
+            <span class="mode-text-mini">AI</span>
+          </button>
+          <button class="mode-btn" data-mode="extension" id="modeExtension" title="Binance Web3 Wallet Extension Mode (Manual Signing)">
+            <span class="mode-text-full">Extension</span>
+            <span class="mode-text-mid">Extension</span>
+            <span class="mode-text-short">Ext</span>
+            <span class="mode-text-mini">Ext</span>
+          </button>
+        </div>
+
+        <!-- Network Toggle Pill -->
+        <div class="network-toggle" id="networkToggle" title="Toggle between BSC Testnet (97) and BSC Mainnet (56)">
+          <button class="net-btn active" data-chain="97" id="netTestnet" title="Binance Smart Chain Testnet (Chain ID 97)">
+            <span class="net-text-full">BSC Testnet (97)</span>
+            <span class="net-text-mid">Testnet (97)</span>
+            <span class="net-text-short">BSC 97</span>
+            <span class="net-text-mini">T97</span>
+          </button>
+          <button class="net-btn" data-chain="56" id="netMainnet" title="Binance Smart Chain Mainnet (Chain ID 56)">
+            <span class="net-text-full">BSC Mainnet (56)</span>
+            <span class="net-text-mid">Mainnet (56)</span>
+            <span class="net-text-short">BSC 56</span>
+            <span class="net-text-mini">M56</span>
+          </button>
+        </div>
+
+        <!-- Wallet Status / Connect Button -->
+        <button class="wallet-btn binance-wallet-btn" id="connectWalletBtn" title="Binance Agentic Wallet Control Hub">
+          <span class="wallet-icon">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path>
+              <path d="M4 6v12a2 2 0 0 0 2 2h14v-4"></path>
+              <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path>
+            </svg>
+          </span>
+          <span id="walletBtnText">
+            <span class="wallet-btn-prefix">Connect </span><span class="wallet-btn-main">Agentic Wallet</span><span class="wallet-btn-short">Connect</span>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Trading Desk Layout -->
+    <main class="layout studio-layout">
+      <!-- Left Column: Synthesizer & Factsheet -->
+      <section class="main-content">
+        <div class="hero-header">
+          <h1 class="space-mono-bold headline">
+            Dynamic ETF <span class="space-mono-bold">Synthesizer</span>
+          </h1>
+          <p class="sub-headline">
+            Decompose any natural-language thesis into an atomic bStocks basket on BSC
+          </p>
+        </div>
+
+        <!-- Interactive Prompt Form Box -->
+        <div class="prompt-box">
+          <div class="prompt-box-header">
+            <span class="prompt-label">Your Investment Thesis:</span>
+          </div>
+
+          <div class="prompt-input-wrapper">
+            <textarea
+              id="promptInput"
+              class="prompt-textarea"
+              rows="3"
+              aria-label="Investment Thesis and Allocation Prompt"
+              placeholder="e.g. Build an AI-infrastructure basket of Nvidia, Apple, and TSMC, hedged with 30% US Treasury yield"
+            ></textarea>
+          </div>
+
+          <!-- Quick Preset Prompt Chips -->
+          <div class="quick-chips">
+            <span class="chips-label">Presets:</span>
+            <button class="chip-btn" data-prompt="Build an AI-infrastructure basket of Nvidia, Apple, and TSMC, hedged with 30% US Treasury yield">
+              <svg class="chip-svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <span>AI Infrastructure + Yield</span>
+            </button>
+            <button class="chip-btn" data-prompt="Synthesize a high-beta crypto proxy basket of MicroStrategy, Coinbase, and Nvidia hedged with 20% Treasuries">
+              <svg class="chip-svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
+              <span>Crypto Equity Proxies</span>
+            </button>
+            <button class="chip-btn" data-prompt="Create a Magnificent Tech Titans basket with Microsoft, Apple, Nvidia, Alphabet, and Meta">
+              <svg class="chip-svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"></line><line x1="6" y1="18" x2="6" y2="11"></line><line x1="10" y1="18" x2="10" y2="11"></line><line x1="14" y1="18" x2="14" y2="11"></line><line x1="18" y1="18" x2="18" y2="11"></line><polygon points="12 2 20 7 4 7"></polygon></svg>
+              <span>Mag 7 Titans</span>
+            </button>
+            <button class="chip-btn" data-prompt="Autonomous mobility and clean compute portfolio with Tesla, Nvidia, and Google">
+              <svg class="chip-svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+              <span>Clean Tech & Auto</span>
+            </button>
+          </div>
+
+          <!-- Investment Amount & Action Bar -->
+          <div class="prompt-action-bar">
+            <div class="amount-picker">
+              <span class="amount-label">Amount (USDT):</span>
+              <div class="amount-presets">
+                <button class="amt-btn" data-val="100">$100</button>
+                <button class="amt-btn" data-val="500">$500</button>
+                <button class="amt-btn" data-val="1000">$1,000</button>
+                <input type="number" id="customAmount" class="amt-input" min="5" max="100000" aria-label="Investment Amount in USDT" placeholder="Custom" />
+              </div>
+            </div>
+
+            <button id="synthesizeBtn" class="synthesize-btn">
+              <span class="btn-text">Synthesize ETF</span>
+              <span class="btn-arrow">➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Synthesized ETF Factsheet Box -->
+        <div class="factsheet-box" id="factsheetCard">
+          <div class="factsheet-header">
+            <div>
+              <span class="factsheet-tag">DYNAMIC SYNTHESIZED ETF</span>
+              <h2 class="factsheet-title" id="etfName">AI Infrastructure & Yield Alpha ETF</h2>
+              <span class="factsheet-ticker" id="etfTicker">PROMPT-AI77</span>
+            </div>
+            <div class="factsheet-risk-badge" id="etfRiskBadge">BALANCED GROWTH</div>
+          </div>
+
+          <p class="factsheet-thesis" id="etfThesis">
+            Algorithmic multi-asset bStocks basket synthesized on BNB Smart Chain.
+          </p>
+
+          <div class="factsheet-metrics-grid">
+            <div class="metric-card">
+              <span class="m-label">Composite Yield</span>
+              <span class="m-value text-green" id="metricYield">1.85% APY</span>
+              <span class="m-sub">Daily Compounding</span>
+            </div>
+            <div class="metric-card">
+              <span class="m-label">24/7 Off-Hours Spread</span>
+              <span class="m-value text-yellow" id="metricSpread">+0.84%</span>
+              <span class="m-sub">vs Friday TradFi Close</span>
+            </div>
+            <div class="metric-card">
+              <span class="m-label">Portfolio Beta</span>
+              <span class="m-value" id="metricBeta">1.22</span>
+              <span class="m-sub">Market Sensitivity</span>
+            </div>
+            <div class="metric-card">
+              <span class="m-label">Attestation & PoR</span>
+              <span class="m-value text-blue">Daily 100%</span>
+              <span class="m-sub">Binance Web3 Verified</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Execution Overview & Doughnut Chart -->
+      <aside class="execution-overview">
+        <div class="exec-overview-top-container">
+          <h3 class="exec-overview-title">Execution Overview</h3>
+        </div>
+
+        <div class="chart-wrapper">
+          <canvas class="allocation-chart" id="allocationChart"></canvas>
+          <div class="chart-center-overlay" id="chartCenterText">
+            <span class="cc-total" id="ccTotal">—</span>
+            <span class="cc-sub">Allocation</span>
+          </div>
+        </div>
+
+        <div class="execution-receipt">
+          <div class="receipt-header">
+            <p class="eo-title">Execution Receipt:</p>
+            <span class="receipt-quote-id" id="receiptQuoteId">QUOTE: READY</span>
+          </div>
+
+          <div class="eo-allocations-container" id="allocationsBreakdown">
+            <div class="alloc-row">
+              <span class="alloc-name">bNVDA (Nvidia)</span>
+              <span class="alloc-pct">30%</span>
+              <span class="alloc-val">$30.00 (~0.233 bNVDA)</span>
+            </div>
+            <div class="alloc-row">
+              <span class="alloc-name">bAAPL (Apple)</span>
+              <span class="alloc-pct">25%</span>
+              <span class="alloc-val">$25.00 (~0.110 bAAPL)</span>
+            </div>
+            <div class="alloc-row">
+              <span class="alloc-name">bTSMC (TSMC)</span>
+              <span class="alloc-pct">20%</span>
+              <span class="alloc-val">$20.00 (~0.115 bTSMC)</span>
+            </div>
+            <div class="alloc-row">
+              <span class="alloc-name">bTBILL (US Treasury)</span>
+              <span class="alloc-pct">25%</span>
+              <span class="alloc-val">$25.00 (~0.248 bTBILL)</span>
+            </div>
+          </div>
+
+          <div class="receipt-divider"></div>
+
+          <div class="receipt-footer">
+            <!-- Agentic Security Safeguards Box (Active in Agentic Wallet Mode) -->
+            <div class="agentic-safeguard-box" id="agenticSafeguardBox">
+              <div class="asb-header">
+                <span class="asb-title">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#F0B90B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                  <strong>Agentic Security Safeguards</strong>
+                </span>
+                <span class="asb-badge" id="asbGuardrailBadge">ACTIVE</span>
+              </div>
+              <div class="asb-grid">
+                <div>
+                  <span class="asb-label">Daily Quota:</span>
+                  <span class="asb-val" id="asbQuotaLeft">$50,000.00 left</span>
+                </div>
+                <div>
+                  <span class="asb-label">Policy:</span>
+                  <span class="asb-val" id="asbRiskPolicy">AutoReject</span>
+                </div>
+                <div>
+                  <span class="asb-label">MEV Shield:</span>
+                  <span class="asb-val text-green" id="asbMev">ON</span>
+                </div>
+                <div>
+                  <span class="asb-label">x402 AI:</span>
+                  <span class="asb-val" id="asbX402">20/20 Credits</span>
+                </div>
+              </div>
+            </div>
+
+            <p class="eo-sng">Slippage & Gas: <span id="eoGasSlippage">$0.12 (BSC ~3 Gwei)</span></p>
+            <p class="eo-network-fee">Router: <span id="eoRouter">Binance DEX Aggregator (BSC 56)</span></p>
+            <p class="eo-total-cost">Total Cost: <span id="eoTotalCost">$100.12 USDT</span></p>
+            
+            <button class="eo-exec-btn" id="executeBasketBtn">
+              <svg class="btn-svg-icon exec-zap-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span class="btn-text" id="execBtnText">Execute Autonomously via Agentic Wallet</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Holdings Quick Drawer -->
+        <div class="portfolio-drawer-trigger" id="portfolioTrigger">
+          <button class="drawer-btn" id="togglePortfolioBtn">
+            <svg class="btn-svg-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <span>View On-Chain bStocks Portfolio</span>
+          </button>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Execution Modal / Toast -->
+    <div class="exec-modal-overlay" id="execModal" role="dialog" aria-modal="true" aria-labelledby="execModalTitle" style="display: none;">
+      <div class="exec-modal-card">
+        <div class="modal-header">
+          <div class="modal-brand-row">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#F0B90B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <h3 class="modal-title" id="execModalTitle">BNB Smart Chain Basket Execution</h3>
+          </div>
+          <button class="modal-close" id="closeModalBtn" aria-label="Close modal">×</button>
+        </div>
+        <div class="modal-body">
+          <!-- Step 1: Pre-Flight Safety Guardrail Check -->
+          <div class="modal-step" id="stepApprove">
+            <div class="step-icon spinner" id="iconApprove">
+              <svg class="step-svg-spin" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9" stroke-opacity="0.25"/><path d="M12 3a9 9 0 0 1 9 9" stroke="#1E2026"/></svg>
+            </div>
+            <div class="step-info">
+              <h4 id="titleStep1">1. Safety Guardrail & Quota Verification</h4>
+              <p id="descApprove">Verifying investment allowance against Binance Agentic Wallet daily quota ($50,000 limit)...</p>
+            </div>
+          </div>
+          <!-- Step 2: x402 AI Intelligence Pre-Check -->
+          <div class="modal-step" id="stepX402">
+            <div class="step-icon" id="iconX402">
+              <svg class="step-svg-idle" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 14 14"/></svg>
+            </div>
+            <div class="step-info">
+              <h4 id="titleStep2">2. x402 AI Intelligence Pre-Check</h4>
+              <p id="descX402">Querying CoinMarketCap & BNB Chain Agent Studio sentiment via x402 payment protocol...</p>
+            </div>
+          </div>
+          <!-- Step 3: Autonomous Multi-Swap Dispatch -->
+          <div class="modal-step" id="stepSwap">
+            <div class="step-icon" id="iconSwap">
+              <svg class="step-svg-idle" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 14 14"/></svg>
+            </div>
+            <div class="step-info">
+              <h4 id="titleStep3">3. Autonomous Multi-Swap Dispatch</h4>
+              <p id="descSwap">Executing multi-swap basket via Binance Agentic Wallet across bStocks contracts...</p>
+            </div>
+          </div>
+          <div class="tx-hash-box" id="txHashBox" style="display: none;">
+            <span>Transaction Hash on BSC:</span>
+            <a href="#" target="_blank" id="txLink" class="tx-link">0x000...000</a>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="modal-btn" id="modalConfirmBtn">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Portfolio Modal -->
+    <div class="exec-modal-overlay" id="portfolioModal" role="dialog" aria-modal="true" aria-labelledby="portfolioModalTitle" style="display: none;">
+      <div class="exec-modal-card portfolio-card">
+        <div class="modal-header">
+          <div class="modal-brand-row">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#F0B90B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+              <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+            </svg>
+            <h3 class="modal-title" id="portfolioModalTitle">bStocks Holdings Portfolio</h3>
+          </div>
+          <button class="modal-close" id="closePortfolioBtn" aria-label="Close modal">×</button>
+        </div>
+        <div class="modal-body" id="portfolioContent">
+          <div class="portfolio-summary-bar">
+            <div>
+              <span class="p-sub">Total Value</span>
+              <h2 class="p-val" id="pTotalVal">$437.30</h2>
+            </div>
+            <div>
+              <span class="p-sub">24h Net PnL</span>
+              <h3 class="p-pnl text-green" id="pTotalPnl">+$5.17 (+1.20%)</h3>
+            </div>
+          </div>
+          <div class="portfolio-table" id="portfolioTable">
+            <!-- Dynamic rows -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Binance Wallet Notice & Install Modal -->
+    <div class="exec-modal-overlay" id="binanceModal" role="dialog" aria-modal="true" aria-labelledby="binanceModalTitle" style="display: none;">
+      <div class="exec-modal-card binance-modal-card">
+        <div class="modal-header">
+          <div class="binance-modal-brand">
+            <img src="./src/binance_logo_yellow.svg" class="binance-logo-sm" alt="Binance">
+            <h3 class="modal-title" id="binanceModalTitle" style="margin-left: 8px;">Binance Wallet Required</h3>
+          </div>
+          <button class="modal-close" id="closeBinanceModalBtn" aria-label="Close modal">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="binance-notice-box">
+            <p id="binanceNoticeDesc">
+              Promptfolio is tailored exclusively for the <strong>BNB Chain</strong> ecosystem and requires <strong>Binance Wallet</strong> (Binance Web3 Wallet / Binance Chain Wallet). Other non-Binance wallets (such as MetaMask or Phantom) are not supported.
+            </p>
+          </div>
+          <div class="binance-modal-actions">
+            <a href="https://chromewebstore.google.com/detail/binance-wallet/fhbohimaelbohpjbbldcngcnapndodjp" target="_blank" rel="noopener noreferrer" class="binance-install-btn" id="installBinanceBtn">
+              <span>Get Binance Web3 Wallet</span>
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+            <button class="binance-demo-btn" id="launchBinanceDemoBtn">
+              <span>Launch Binance Wallet Demo Mode</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sector / Asset Unavailable Modal -->
+    <div class="exec-modal-overlay" id="sectorNoticeModal" role="dialog" aria-modal="true" aria-labelledby="sectorNoticeTitle" style="display: none;">
+      <div class="exec-modal-card" style="max-width: 540px;">
+        <div class="modal-header" style="background: #FFFBEB; border-bottom: 2px solid #1E2026;">
+          <div class="binance-modal-brand">
+            <span style="font-size: 24px; line-height: 1;">⚠️</span>
+            <div style="margin-left: 10px;">
+              <h3 class="modal-title" id="sectorNoticeTitle" style="color: #B45309; font-size: 16px;">Sector Unavailable on BNB Chain</h3>
+              <p class="modal-subtitle" style="font-size: 11px;">Promptfolio On-Chain Attestation Guardrail</p>
+            </div>
+          </div>
+          <button class="modal-close" id="closeSectorNoticeBtn" aria-label="Close modal">×</button>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+          <div style="background: #FEF3C7; border: 2px solid #F59E0B; border-radius: 6px; padding: 14px; margin-bottom: 16px;">
+            <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: #92400E; margin-bottom: 4px; font-family: var(--font-mono);">
+              Requested Sector Missing: <span id="sectorNoticeMissing" style="text-decoration: underline;">Military Equipment &amp; Defense</span>
+            </div>
+            <p id="sectorNoticeMessage" style="font-size: 13px; line-height: 1.5; color: #78350F; margin: 0; font-weight: 500;">
+              No tokenized equities in this sector are currently minted or verified on BNB Smart Chain.
+            </p>
+          </div>
+          <div style="margin-bottom: 16px;">
+            <div style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #4B5563; margin-bottom: 8px; font-family: var(--font-mono);">
+              Available Verified bStocks Themes (Click to apply):
+            </div>
+            <div id="sectorNoticeSuggestions" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Dynamic chips/buttons -->
+            </div>
+          </div>
+          <div style="background: #F3F4F6; border: 1.5px solid #D1D5DB; border-radius: 6px; padding: 10px 12px; font-size: 11.5px; color: #4B5563; line-height: 1.4;">
+            💡 <strong>Institutional Safety Policy:</strong> Unlike speculative crypto derivatives, bStocks on BSC require 1:1 real-world custody and Proof-of-Reserve backing. We will never substitute unverified assets.
+          </div>
+          <div style="margin-top: 18px; display: flex; justify-content: flex-end;">
+            <button class="modal-btn" id="sectorNoticeDoneBtn" style="background: #F0B90B; color: #1E2026; font-weight: 800; border: 2px solid #1E2026; box-shadow: 3px 3px 0px #1E2026; cursor: pointer; padding: 10px 18px; font-size: 13px;">
+              Dismiss &amp; Update Thesis
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Binance Agentic Wallet Control Hub Modal -->
+    <div class="exec-modal-overlay" id="agenticWalletModal" role="dialog" aria-modal="true" aria-labelledby="agenticModalTitle" style="display: none;">
+      <div class="exec-modal-card agentic-modal-card">
+        <div class="modal-header">
+          <div class="binance-modal-brand">
+            <img src="./src/binance_logo_yellow.svg" class="binance-logo-sm" alt="Binance">
+            <div style="margin-left: 8px;">
+              <h3 class="modal-title" id="agenticModalTitle">Binance Agentic Wallet Hub</h3>
+              <p class="modal-subtitle">MPC Keyless Autonomous Agent Architecture (@binance/agentic-wallet)</p>
+            </div>
+          </div>
+          <button class="modal-close" id="closeAgenticModalBtn" aria-label="Close modal">×</button>
+        </div>
+
+        <!-- Agentic Tab Navigation -->
+        <div class="agentic-tabs" role="tablist" aria-label="Binance Agentic Wallet Hub Tabs">
+          <button class="agentic-tab-btn active" data-tab="guardrails" id="tabGuardrailsBtn" role="tab" aria-selected="true" title="Security Guardrails & Quotas">
+            <svg class="tab-svg-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <span class="tab-label-full">Security Guardrails</span>
+            <span class="tab-label-short">Guardrails</span>
+          </button>
+          <button class="agentic-tab-btn" data-tab="pairing" id="tabPairingBtn" role="tab" aria-selected="false" title="Binance App QR Pairing">
+            <svg class="tab-svg-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+              <line x1="12" y1="18" x2="12.01" y2="18"></line>
+            </svg>
+            <span class="tab-label-full">Binance App Pairing</span>
+            <span class="tab-label-short">App Pairing</span>
+          </button>
+          <button class="agentic-tab-btn" data-tab="activity" id="tabActivityBtn" role="tab" aria-selected="false" title="Autonomous Activity Log">
+            <svg class="tab-svg-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            <span class="tab-label-full">Autonomous Activity</span>
+            <span class="tab-label-short">Activity</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Tab 1: Guardrails & Quotas -->
+          <div class="agentic-tab-content active" id="tabContentGuardrails">
+            <div class="guardrail-summary-grid">
+              <div class="gs-card">
+                <span class="gs-label">Daily Spend Limit</span>
+                <h4 class="gs-val" id="cardDailyLimit">$50,000.00 USDT</h4>
+                <p class="gs-desc">Enforced via Binance App</p>
+              </div>
+              <div class="gs-card">
+                <span class="gs-label">Remaining 24h Quota</span>
+                <h4 class="gs-val text-green" id="cardQuotaLeft">$50,000.00 USDT</h4>
+                <p class="gs-desc" id="cardQuotaUsed">Used: $0.00 USDT today</p>
+              </div>
+              <div class="gs-card">
+                <span class="gs-label">Abnormal Tx Policy</span>
+                <h4 class="gs-val">AutoReject</h4>
+                <p class="gs-desc">Blocks high-slippage & risk breaches</p>
+              </div>
+              <div class="gs-card">
+                <span class="gs-label">x402 AI Intelligence</span>
+                <h4 class="gs-val" id="cardX402Quota">20 / 20 Calls</h4>
+                <p class="gs-desc">CMC & Stock Agent credits</p>
+              </div>
+            </div>
+
+            <div class="guardrail-info-box">
+              <p>
+                <strong>How Autonomous Execution Works:</strong> When you execute a thesis in Promptfolio, the AI Agent dispatches atomic swaps directly through Binance's keyless MPC infrastructure. The user is protected at all times by strict, non-bypassable guardrails without needing manual wallet extension popups for every single token swap.
+              </p>
+            </div>
+          </div>
+
+          <!-- Tab 2: Binance App Pairing (QR Code) -->
+          <div class="agentic-tab-content" id="tabContentPairing" style="display: none;">
+            <div class="pairing-container">
+              <div class="pairing-intro">
+                <p class="pairing-desc">
+                  Scan this QR code with your <strong>Binance App</strong> or smartphone camera to pair this agent session with your MPC keyless wallet:
+                </p>
+              </div>
+
+              <div class="pairing-main-grid">
+                <!-- Left: Scannable QR Code Frame -->
+                <div class="qr-card">
+                  <div class="qr-target-frame">
+                    <div class="qr-corner qr-corner-tl"></div>
+                    <div class="qr-corner qr-corner-tr"></div>
+                    <div class="qr-corner qr-corner-bl"></div>
+                    <div class="qr-corner qr-corner-br"></div>
+                    <div id="qrCodeContainer" class="qr-canvas-holder">
+                      <!-- Rendered by QRCode.js -->
+                      <div class="qr-placeholder-loading">
+                        <svg class="step-svg-spin" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#F0B90B" stroke-width="2.5"><circle cx="12" cy="12" r="9" stroke-opacity="0.25"/><path d="M12 3a9 9 0 0 1 9 9" stroke="#1E2026"/></svg>
+                        <span>Generating QR...</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right: Pairing Code & Mobile Steps -->
+                <div class="pairing-details-panel">
+                  <div class="pairing-code-card">
+                    <span class="pairing-field-label">Pairing Session Code</span>
+                    <div class="pairing-code-row">
+                      <strong class="code-val" id="pairingCodeVal">------</strong>
+                      <button class="copy-code-btn" id="copyPairingCodeBtn" type="button" title="Copy pairing code">
+                        <svg class="btn-svg-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span id="copyBtnText">Copy</span>
+                      </button>
+                    </div>
+                    <div class="pairing-status-badge" id="pairingStatusBadge">
+                      <span class="status-pulse-dot" id="pairingStatusDot"></span>
+                      <span id="pairingStatusText">Awaiting Scan</span>
+                    </div>
+                  </div>
+
+                  <!-- Live Listener Status Indicator -->
+                  <div class="pairing-listener-status" id="pairingListenerStatus">
+                    <span class="listener-pulse-ring"></span>
+                    <span class="listener-status-text" id="pairingListenerText">Listening for Binance App scan &amp; confirmation...</span>
+                  </div>
+
+                  <div class="pairing-steps-guide">
+                    <div class="guide-step">
+                      <span class="step-num">1</span>
+                      <span>Open <strong>Binance App</strong> &gt; Tap QR Scanner</span>
+                    </div>
+                    <div class="guide-step">
+                      <span class="step-num">2</span>
+                      <span>Point camera at the QR code to verify session</span>
+                    </div>
+                    <div class="guide-step">
+                      <span class="step-num">3</span>
+                      <span>Authorize MPC keyless wallet rotation &amp; guardrails</span>
+                    </div>
+                  </div>
+
+                  <!-- Agent Confirmation Prompt Action -->
+                  <div class="agent-confirm-trigger-box">
+                    <button class="confirm-in-agent-btn" id="openAgentConfirmBtn" type="button" title="Confirm sign-in inside your Agent" style="display: none;">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                      <span>Confirm Sign-In in Agent</span>
+                    </button>
+                  </div>
+
+                  <!-- Pairing Success Banner -->
+                  <div class="pairing-success-banner" id="pairingSuccessBanner" style="display: none;">
+                    <div class="pairing-success-badge">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#00C087" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                      <span>Agent Session Paired &amp; Confirmed!</span>
+                    </div>
+                    <p class="pairing-success-msg" id="pairingSuccessMsg">Keyless MPC Wallet active under strict security guardrails.</p>
+                  </div>
+
+                  <div class="pairing-actions-row">
+                    <a href="#" target="_blank" rel="noopener noreferrer" class="pairing-link-btn" id="pairingLinkBtn" title="Open Binance Web3 Agent Sign-in link">
+                      <span>Open Direct Link</span>
+                      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
+                    <button class="refresh-qr-btn" id="refreshQrBtn" type="button" title="Request new pairing session">
+                      <svg class="btn-svg-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                      </svg>
+                      <span>Refresh QR</span>
+                    </button>
+                  </div>
+
+                  <p class="pairing-hint">CLI alternative: <code>baw auth signin</code></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 3: Autonomous Activity Log -->
+          <div class="agentic-tab-content" id="tabContentActivity" style="display: none;">
+            <div class="activity-log-container" id="activityLogContainer">
+              <div class="activity-empty">No autonomous basket executions in this session yet. Synthesize and execute a basket to see verifiable BSC transactions.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="modal-btn" id="agenticDoneBtn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Binance Agent Confirmation Popup (Matches Binance Mobile App prompt: "Confirm sign-in in your Agent") -->
+    <div class="agent-confirm-overlay" id="agentConfirmModal" role="dialog" aria-modal="true" aria-labelledby="agentConfirmTitle" style="display: none;">
+      <div class="agent-confirm-window">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <span class="modal-icon-shield">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#F0B90B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </span>
+            <div>
+              <h3 class="modal-title" id="agentConfirmTitle">Confirm Sign-In in your Agent</h3>
+              <p class="modal-subtitle">Binance Agent OS • Keyless MPC Wallet Authorization</p>
+            </div>
+          </div>
+          <button class="modal-close" id="closeAgentConfirmModalBtn" aria-label="Close modal">×</button>
+        </div>
+
+        <div class="modal-body agent-confirm-body">
+          <div class="agent-confirm-notice">
+            <div class="confirm-app-status-badge">
+              <span class="status-pulse-dot active"></span>
+              <strong>App Confirmed</strong>
+            </div>
+            <p class="agent-confirm-desc">
+              Your <strong>Binance App</strong> has verified this pairing request. Please confirm the pairing code below matches your mobile screen to complete sign-in.
+            </p>
+          </div>
+
+          <!-- Pairing Code Tiles matching Binance Mobile App -->
+          <div class="pairing-code-tiles-section">
+            <span class="pairing-tiles-label">Pairing Session Code</span>
+            <div class="pairing-code-tiles" id="confirmModalTiles">
+              <!-- Dynamically populated e.g. [ b ] [ e ] [ a ] [ 0 ] [ 8 ] [ e ] -->
+            </div>
+          </div>
+
+          <div class="agent-confirm-details-card">
+            <div class="confirm-detail-row">
+              <span class="confirm-detail-label">Wallet Architecture</span>
+              <span class="confirm-detail-val">Keyless MPC (No Private Key Stored)</span>
+            </div>
+            <div class="confirm-detail-row">
+              <span class="confirm-detail-label">Enforced Daily Quota</span>
+              <span class="confirm-detail-val highlight-green">$50,000 USDT</span>
+            </div>
+            <div class="confirm-detail-row">
+              <span class="confirm-detail-label">Security Guardrails</span>
+              <span class="confirm-detail-val">AutoReject Abnormal • MEV Shield Active</span>
+            </div>
+          </div>
+
+          <div class="agent-confirm-state" id="agentConfirmState" style="display: none;">
+            <svg class="step-svg-spin" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#F0B90B" stroke-width="2.5"><circle cx="12" cy="12" r="9" stroke-opacity="0.25"/><path d="M12 3a9 9 0 0 1 9 9" stroke="#1E2026"/></svg>
+            <span id="agentConfirmStateText">Authorizing MPC Keyless Session...</span>
+          </div>
+        </div>
+
+        <div class="modal-footer agent-confirm-footer">
+          <button class="modal-btn modal-btn-secondary" id="agentConfirmCancelBtn" type="button">Cancel</button>
+          <button class="modal-btn agent-primary-confirm-btn" id="agentConfirmSubmitBtn" type="button">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Confirm Sign-In</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart.js & Ethers.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.5/ethers.umd.min.js"></script>
+    <script src="./src/script.js" defer></script>
+  </body>
+</html>
