@@ -40,10 +40,6 @@
     {
       "source": "/assets/(.*)",
       "destination": "/frontend/assets/$1"
-    },
-    {
-      "source": "/(.*\\.(html|css|js|svg|png|jpg|jpeg|gif|ico|json|woff|woff2|ttf))",
-      "destination": "/frontend/$1"
     }
   ]
 }
