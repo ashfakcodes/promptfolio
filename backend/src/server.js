@@ -15,9 +15,13 @@ import { contractSecurityValidator } from './services/contractSecurityValidator.
 import { marketDataIngestionService } from './services/marketDataIngestionService.js';
 import { x402SentimentService } from './services/x402SentimentService.js';
 
+import fs from 'fs';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const frontendDir = path.resolve(__dirname, '../../frontend');
+const frontendDir = fs.existsSync(path.resolve(process.cwd(), 'frontend'))
+  ? path.resolve(process.cwd(), 'frontend')
+  : path.resolve(__dirname, '../../frontend');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
