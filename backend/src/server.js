@@ -28,10 +28,21 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json({ limit: '100kb' }));
-app.use(express.static(frontendDir));
 
-app.get('/', (req, res) => res.sendFile(path.join(frontendDir, 'landing.html')));
-app.get('/app', (req, res) => res.sendFile(path.join(frontendDir, 'app.html')));
+// Serve static frontend assets
+app.use(express.static(frontendDir));
+app.use('/frontend', express.static(frontendDir));
+app.use('/src', express.static(path.join(frontendDir, 'src')));
+app.use('/frontend/src', express.static(path.join(frontendDir, 'src')));
+
+// Web UI routes
+app.get(['/', '/landing', '/landing.html', '/index.html', '/frontend/landing.html', '/frontend/index.html', '/frontend'], (req, res) => {
+  res.sendFile(path.join(frontendDir, 'landing.html'));
+});
+
+app.get(['/app', '/app.html', '/frontend/app.html', '/frontend/app'], (req, res) => {
+  res.sendFile(path.join(frontendDir, 'app.html'));
+});
 
 function isValidAddress(addr) {
   return typeof addr === 'string' && /^0x[a-fA-F0-9]{40}$/.test(addr);
